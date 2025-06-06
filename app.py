@@ -63,8 +63,34 @@ if submit_button:
             # Parse the response
             prediction = response.json()
 
+            # Display the raw response for debugging
+            st.write("API Response:", prediction)
+
+            # Handle different response formats
+            if isinstance(prediction, dict):
+                if 'fare_amount' in prediction:
+                    fare = prediction['fare_amount']
+                elif 'prediction' in prediction:
+                    fare = prediction['prediction']
+                elif 'fare' in prediction:
+                    fare = prediction['fare']
+                else:
+                    # Show all keys to help debug
+                    st.warning(f"Response keys: {list(prediction.keys())}")
+                    fare = list(prediction.values())[0]  # Try first value
+            elif isinstance(prediction, (int, float)):
+                # Direct numeric response
+                fare = prediction
+            else:
+                # Try to convert to float if it's a string
+                try:
+                    fare = float(prediction)
+                except:
+                    st.error(f"Couldn't parse response: {prediction}")
+                    fare = 0
+
             # Display the prediction
-            st.success(f"The predicted fare amount is: ${prediction['fare_amount']:.2f}")
+            st.success(f"The predicted fare amount is: ${fare:.2f}")
 
             # Display a map with the route
             st.subheader("Ride Route")
