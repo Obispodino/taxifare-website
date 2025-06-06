@@ -15,22 +15,22 @@ with st.form(key='taxi_fare_form'):
     # Date and time input
     date_input = st.date_input('Pickup date', value=datetime.now().date())
     time_input = st.time_input('Pickup time', value=datetime.now().time())
-    
+
     # Location inputs
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Pickup Location")
         pickup_longitude = st.number_input('Pickup longitude', value=-73.950655, format="%.6f")
         pickup_latitude = st.number_input('Pickup latitude', value=40.783282, format="%.6f")
-    
+
     with col2:
         st.subheader("Dropoff Location")
         dropoff_longitude = st.number_input('Dropoff longitude', value=-73.984365, format="%.6f")
         dropoff_latitude = st.number_input('Dropoff latitude', value=40.769802, format="%.6f")
-    
+
     # Passenger count
     passenger_count = st.slider('Passenger count', min_value=1, max_value=8, value=2)
-    
+
     # Submit button
     submit_button = st.form_submit_button(label='Predict Fare')
 
@@ -38,7 +38,7 @@ with st.form(key='taxi_fare_form'):
 if submit_button:
     # Combine date and time
     pickup_datetime = f"{date_input} {time_input}"
-    
+
     # Create parameters dictionary
     params = {
         'pickup_datetime': pickup_datetime,
@@ -48,21 +48,21 @@ if submit_button:
         'dropoff_latitude': dropoff_latitude,
         'passenger_count': passenger_count
     }
-    
+
     # API endpoint
     url = 'https://taxi-399730216663.europe-west1.run.app/predict'
-    
+
     # Call the API
     try:
         response = requests.get(url, params=params)
-        
+
         if response.status_code == 200:
             # Parse the response
             prediction = response.json()
-            
+
             # Display the prediction
             st.success(f"The predicted fare amount is: ${prediction['fare_amount']:.2f}")
-            
+
             # Display a map with the route
             st.subheader("Ride Route")
             data = pd.DataFrame({
@@ -71,10 +71,10 @@ if submit_button:
                 'location': ['Pickup', 'Dropoff']
             })
             st.map(data)
-            
+
         else:
             st.error(f"Error from API: {response.status_code} - {response.text}")
-    
+
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
