@@ -36,8 +36,8 @@ with st.form(key='taxi_fare_form'):
 
 # When form is submitted
 if submit_button:
-    # Combine date and time
-    pickup_datetime = f"{date_input} {time_input}"
+    # Format date and time properly (removing microseconds)
+    pickup_datetime = f"{date_input} {time_input.strftime('%H:%M:%S')}"
 
     # Create parameters dictionary
     params = {
@@ -48,6 +48,9 @@ if submit_button:
         'dropoff_latitude': dropoff_latitude,
         'passenger_count': passenger_count
     }
+
+    # Debug: Show what's being sent to the API
+    st.write("Sending to API:", params)
 
     # API endpoint
     url = 'https://taxi-399730216663.europe-west1.run.app/predict'
